@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
  * Created by Ryan
  * On 2017/10/6.
  */
-class AspectAdviceMethod {
+class AspectNormalAdviceMethod {
     
 	private String pointMethodName;
     private int pointMethodOrder;
@@ -14,7 +14,7 @@ class AspectAdviceMethod {
     protected Method pointcutMethod;
     private TestPointcut pointcut;
 
-    public AspectAdviceMethod(String pointMethodName, int pointMethodOrder,Object aspectObj, Method pointcutMethod) {
+    public AspectNormalAdviceMethod(String pointMethodName, int pointMethodOrder,Object aspectObj, Method pointcutMethod) {
         this.pointMethodName = pointMethodName;
         this.pointMethodOrder = pointMethodOrder;
         this.aspectObj = aspectObj;

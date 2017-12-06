@@ -12,10 +12,10 @@ import java.util.List;
  * Created by Ryan
  * On 2017/10/5.
  */
-public class InstanceFactory {
+public class AopInstanceFactory {
     private static final HashMap<Class<?>, Object> classBeanMap = new HashMap<>();
     private static final HashMap<String, Object> beanNameMap = new HashMap<>();
-    private static final HashMap<Class<? extends Annotation>, List<AspectAdviceMethod>> mAspectPointcutMethodListMap = new HashMap<>();
+    private static final HashMap<Class<? extends Annotation>, List<AspectNormalAdviceMethod>> mAspectPointcutMethodListMap = new HashMap<>();
 
     public static <T> T getInstance(Class<T> clazz) {
         return (T) classBeanMap.get(clazz);
@@ -50,18 +50,23 @@ public class InstanceFactory {
         }
         for (Method method : methods) {
            
+        	 if (method.isAnnotationPresent(TestBefore.class)) {
+             	TestBefore adviceBefore = (TestBefore) method.getAnnotation(TestBefore.class);
+                 List<AspectNormalAdviceMethod> adviceList = getAspectAdviceList(TestBefore.class);
+                 adviceList.add(new AspectNormalAdviceMethod(adviceBefore.value(), adviceBefore.order(), obj, method));
+             }
             if (method.isAnnotationPresent(TestAfter.class)) {
             	TestAfter adviceAfter = method.getAnnotation(TestAfter.class);
-                List<AspectAdviceMethod> adviceList = getAspectAdviceList(TestAfter.class);
-                adviceList.add(new AspectAdviceMethod(adviceAfter.value(), adviceAfter.order(), obj, method));
+                List<AspectNormalAdviceMethod> adviceList = getAspectAdviceList(TestAfter.class);
+                adviceList.add(new AspectNormalAdviceMethod(adviceAfter.value(), adviceAfter.order(), obj, method));
             }
            
         }
 
     }
 
-    private static List<AspectAdviceMethod> getAspectAdviceList(Class<? extends Annotation> adviceClazz) {
-        List<AspectAdviceMethod> methodList = mAspectPointcutMethodListMap.get(adviceClazz);
+    private static List<AspectNormalAdviceMethod> getAspectAdviceList(Class<? extends Annotation> adviceClazz) {
+        List<AspectNormalAdviceMethod> methodList = mAspectPointcutMethodListMap.get(adviceClazz);
         if (null == methodList) {
             methodList = new ArrayList<>();
             mAspectPointcutMethodListMap.put(adviceClazz, methodList);
@@ -70,7 +75,7 @@ public class InstanceFactory {
     }
 
     private static boolean isAspectClazz(Class<?> aClass) {
-        if (aClass.isAnnotationPresent(Aspect.class)) {
+        if (aClass.isAnnotationPresent(TestAspect.class)) {
             return true;
         }
         return false;
@@ -91,7 +96,7 @@ public class InstanceFactory {
     private static Object newInstanceProxyClass(Class<?> anInterface, Class<?> beanClazz) {
         try {
             Object targetObj = beanClazz.newInstance();
-            return Proxy.newProxyInstance(targetObj.getClass().getClassLoader(), new Class<?>[]{anInterface}, new AspectHandler(targetObj, mAspectPointcutMethodListMap));
+            return Proxy.newProxyInstance(targetObj.getClass().getClassLoader(), new Class<?>[]{anInterface}, new TestAspectHandler(targetObj, mAspectPointcutMethodListMap));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
