@@ -18,6 +18,8 @@ class TestAspectHandler implements InvocationHandler {
     private HashMap<Class<? extends Annotation>, List<AspectNormalAdviceMethod>> mAspectPointcutMethodListMap;
     private HashMap<Method, List<AspectNormalAdviceMethod>> mAfterMethodMap = new HashMap<>();
     private HashMap<Method, List<AspectNormalAdviceMethod>> mBeforeMethodMap = new HashMap<>();
+    private HashMap<Method, AspectAroundMethod> mAroundMethodMap = new HashMap<>();
+
     public TestAspectHandler(Object targetObj, HashMap<Class<? extends Annotation>, List<AspectNormalAdviceMethod>> map) {
         this.targetObj = targetObj;
         this.mAspectPointcutMethodListMap = map;
@@ -30,10 +32,16 @@ class TestAspectHandler implements InvocationHandler {
         for (AspectNormalAdviceMethod adviceMethod : beforeMethods) {
             adviceMethod.invoke(beforePoint);
         }
+        AspectAroundMethod aroundMethod = getAroundMethodList(method);
         Object obj;
-        obj = method.invoke(targetObj, args);
+        if (null != aroundMethod) {
+            obj = aroundMethod.invoke(beforePoint);
+        } else {
+            obj = method.invoke(targetObj, args);
+        }
+//        Object obj;
+//        obj = method.invoke(targetObj, args);
        List<AspectNormalAdviceMethod> afterMethods = getAfterMethodList(method);
-   
         TestJointPoint afterPoint = new TestJointPoint().setTargetObj(targetObj).setProxy(proxy).setMethod(method).setArgs(args).setResult(obj);
         for (AspectNormalAdviceMethod adviceMethod : afterMethods) {
             adviceMethod.invoke(afterPoint);
@@ -41,7 +49,32 @@ class TestAspectHandler implements InvocationHandler {
         return obj;
     }
 
-   
+    private AspectAroundMethod getAroundMethodList(Method method) {
+        if (mAroundMethodMap.containsKey(method)) return mAroundMethodMap.get(method);
+        List<AspectNormalAdviceMethod> adviceMethods = mAspectPointcutMethodListMap.get(TestAround.class);
+        if (null == adviceMethods) return null;
+        List<AspectAroundMethod> list = new ArrayList<>();
+        for (AspectNormalAdviceMethod adviceMethod : adviceMethods) {
+        	AspectAroundMethod adviceAroundMethod = (AspectAroundMethod) adviceMethod;
+            if (adviceAroundMethod.match(method)) {
+                list.add(adviceAroundMethod);
+            }
+        }
+        AspectAroundMethod aroundMethod = null;
+        if (!list.isEmpty()) {
+            sortAdviceList(list);
+            AspectAroundMethod upMethod = null;
+            for (AspectAroundMethod adviceAroundMethod : list) {
+                if (null == aroundMethod) aroundMethod = adviceAroundMethod;
+                if (null != upMethod) {
+                    upMethod.setNextMethod(adviceAroundMethod);
+                }
+                upMethod = adviceAroundMethod;
+            }
+        }
+        mAroundMethodMap.put(method, aroundMethod);
+        return aroundMethod;
+    }
     private static void sortAdviceList(List<? extends AspectNormalAdviceMethod> list) {
         Collections.sort(list, (Comparator<AspectNormalAdviceMethod>) (o1, o2) -> {
             Integer order1 = o1.getPointMethodOrder();

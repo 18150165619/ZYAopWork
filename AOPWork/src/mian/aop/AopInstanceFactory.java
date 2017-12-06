@@ -60,6 +60,11 @@ public class AopInstanceFactory {
                 List<AspectNormalAdviceMethod> adviceList = getAspectAdviceList(TestAfter.class);
                 adviceList.add(new AspectNormalAdviceMethod(adviceAfter.value(), adviceAfter.order(), obj, method));
             }
+            if (method.isAnnotationPresent(TestAround.class)) {
+            	TestAround adviceAround = method.getAnnotation(TestAround.class);
+                List<AspectNormalAdviceMethod> adviceList = getAspectAdviceList(TestAround.class);
+                adviceList.add(new AspectAroundMethod(adviceAround.value(), adviceAround.order(), obj, method));
+            }
            
         }
 
