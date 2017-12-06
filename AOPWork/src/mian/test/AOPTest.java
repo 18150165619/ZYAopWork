@@ -10,9 +10,13 @@ public class AOPTest {
 		InstanceFactory.init("mian");
 //		InstanceFactory.init("mian.test");
 //		InstanceFactory.init("mian.test.impl");
-		TestSell testService = InstanceFactory.getInstance("TestSell");
-        if (null != testService) {
-	    	 testService.sell();
+		TestSell testsellService = InstanceFactory.getInstance("TestSell");
+        if (null != testsellService) {
+        	testsellService.sell();
+	     }
+        TestCost testCostService = InstanceFactory.getInstance("TestCost");
+        if (null != testCostService) {
+        	testCostService.cost();
 	     }
 	}
 }

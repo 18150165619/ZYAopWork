@@ -1,12 +1,27 @@
 package mian.test;
 
-public class TestCostServiceAspect implements TestCost{
+import mian.aop.Aspect;
+import mian.aop.TestAfter;
+import mian.aop.TestJointPoint;
+import mian.aop.TestPointcut;
 
-	@Override
-	public void cost() {
-		System.out.println("花费了6000元！");
-		
-	}
+@Aspect
+public class TestCostServiceAspect {
+	
+  @TestPointcut("^.*?cost\\(\\).*+$")
+     public void cost() {
+  }
+
+  
+  @TestAfter(value = "cost", order = 2)
+  public void after1(TestJointPoint point) {
+      System.out.println("Cost after1");
+  }
+
+  @TestAfter(value = "cost", order = 1)
+  public void after2(TestJointPoint point) {
+      System.out.println("Cost after2");
+  }
 	
 	
 

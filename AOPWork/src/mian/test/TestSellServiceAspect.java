@@ -13,19 +13,17 @@ import mian.aop.TestPointcut;
 public class TestSellServiceAspect {
 
     @TestPointcut("^.*?sell\\(\\).*+$")
-//    @TestPointcut("execution(* mian.test.impl.*(..))")
-    public void sell() {
-//        System.out.println("handle");
+       public void sell() {
     }
 
     
     @TestAfter(value = "sell", order = 2)
     public void after1(TestJointPoint point) {
-        System.out.println("TestSellServiceImpl after1");
+        System.out.println("sell after1");
     }
 
     @TestAfter(value = "sell", order = 1)
     public void after2(TestJointPoint point) {
-        System.out.println("TestSellServiceImpl after2");
+        System.out.println("sell after2");
     }
 }
