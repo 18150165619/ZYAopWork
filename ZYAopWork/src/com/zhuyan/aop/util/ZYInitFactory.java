@@ -1,4 +1,4 @@
-package mian.aop;
+package com.zhuyan.aop.util;
 
 
 import java.lang.annotation.Annotation;
@@ -8,14 +8,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.zhuyan.aop.annotation.TestAfter;
+import com.zhuyan.aop.annotation.TestAround;
+import com.zhuyan.aop.annotation.TestAspect;
+import com.zhuyan.aop.annotation.TestAspectHandler;
+import com.zhuyan.aop.annotation.TestBefore;
+import com.zhuyan.aop.annotation.TestComponent;
+import com.zhuyan.aop.annotation.ZYAspectAroundMethod;
+import com.zhuyan.aop.annotation.ZYAspectNormalMethod;
 /**
  * Created by Ryan
  * On 2017/10/5.
  */
-public class AopInstanceFactory {
+public class ZYInitFactory {
     private static final HashMap<Class<?>, Object> classBeanMap = new HashMap<>();
     private static final HashMap<String, Object> beanNameMap = new HashMap<>();
-    private static final HashMap<Class<? extends Annotation>, List<AspectNormalAdviceMethod>> mAspectPointcutMethodListMap = new HashMap<>();
+    private static final HashMap<Class<? extends Annotation>, List<ZYAspectNormalMethod>> mAspectPointcutMethodListMap = new HashMap<>();
 
     public static <T> T getInstance(Class<T> clazz) {
         return (T) classBeanMap.get(clazz);
@@ -52,26 +60,26 @@ public class AopInstanceFactory {
            
         	 if (method.isAnnotationPresent(TestBefore.class)) {
              	TestBefore adviceBefore = (TestBefore) method.getAnnotation(TestBefore.class);
-                 List<AspectNormalAdviceMethod> adviceList = getAspectAdviceList(TestBefore.class);
-                 adviceList.add(new AspectNormalAdviceMethod(adviceBefore.value(), adviceBefore.order(), obj, method));
+                 List<ZYAspectNormalMethod> adviceList = getAspectAdviceList(TestBefore.class);
+                 adviceList.add(new ZYAspectNormalMethod(adviceBefore.value(), adviceBefore.order(), obj, method));
              }
             if (method.isAnnotationPresent(TestAfter.class)) {
             	TestAfter adviceAfter = method.getAnnotation(TestAfter.class);
-                List<AspectNormalAdviceMethod> adviceList = getAspectAdviceList(TestAfter.class);
-                adviceList.add(new AspectNormalAdviceMethod(adviceAfter.value(), adviceAfter.order(), obj, method));
+                List<ZYAspectNormalMethod> adviceList = getAspectAdviceList(TestAfter.class);
+                adviceList.add(new ZYAspectNormalMethod(adviceAfter.value(), adviceAfter.order(), obj, method));
             }
             if (method.isAnnotationPresent(TestAround.class)) {
             	TestAround adviceAround = method.getAnnotation(TestAround.class);
-                List<AspectNormalAdviceMethod> adviceList = getAspectAdviceList(TestAround.class);
-                adviceList.add(new AspectAroundMethod(adviceAround.value(), adviceAround.order(), obj, method));
+                List<ZYAspectNormalMethod> adviceList = getAspectAdviceList(TestAround.class);
+                adviceList.add(new ZYAspectAroundMethod(adviceAround.value(), adviceAround.order(), obj, method));
             }
            
         }
 
     }
 
-    private static List<AspectNormalAdviceMethod> getAspectAdviceList(Class<? extends Annotation> adviceClazz) {
-        List<AspectNormalAdviceMethod> methodList = mAspectPointcutMethodListMap.get(adviceClazz);
+    private static List<ZYAspectNormalMethod> getAspectAdviceList(Class<? extends Annotation> adviceClazz) {
+        List<ZYAspectNormalMethod> methodList = mAspectPointcutMethodListMap.get(adviceClazz);
         if (null == methodList) {
             methodList = new ArrayList<>();
             mAspectPointcutMethodListMap.put(adviceClazz, methodList);

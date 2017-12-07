@@ -6,11 +6,11 @@ import java.lang.reflect.Method;
  * Created by Ryan
  * On 2017/10/6.
  */
-class AspectAroundMethod extends AspectNormalAdviceMethod {
+class ZYAspectAroundMethod extends ZYAspectNormalMethod {
   
-	private AspectAroundMethod method;
+	private ZYAspectAroundMethod method;
 
-    public AspectAroundMethod(String pointMethodName, int pointMethodOrder, Object aspectObj, Method pointcutMethod) {
+    public ZYAspectAroundMethod(String pointMethodName, int pointMethodOrder, Object aspectObj, Method pointcutMethod) {
         super(pointMethodName, pointMethodOrder, aspectObj, pointcutMethod);
     }
 
@@ -23,7 +23,7 @@ class AspectAroundMethod extends AspectNormalAdviceMethod {
         }
     }
 
-    public AspectAroundMethod setNextMethod(AspectAroundMethod method) {
+    public ZYAspectAroundMethod setNextMethod(ZYAspectAroundMethod method) {
         this.method = method;
         return this;
     }

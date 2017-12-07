@@ -1,4 +1,4 @@
-package mian.aop;
+package com.zhuyan.aop.annotation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -13,7 +13,7 @@ import java.util.List;
  * Created by Ryan
  * On 2017/10/5.
  */
-class TestAspectHandler implements InvocationHandler {
+public class TestAspectHandler implements InvocationHandler {
     private Object targetObj;
     private HashMap<Class<? extends Annotation>, List<ZYAspectNormalMethod>> mAspectPointcutMethodListMap;
     private HashMap<Method, List<ZYAspectNormalMethod>> mAfterMethodMap = new HashMap<>();

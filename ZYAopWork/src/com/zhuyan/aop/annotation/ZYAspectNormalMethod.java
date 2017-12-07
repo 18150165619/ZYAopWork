@@ -1,4 +1,4 @@
-package mian.aop;
+package com.zhuyan.aop.annotation;
 
 import java.lang.reflect.Method;
 
@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
  * Created by Ryan
  * On 2017/10/6.
  */
-class AspectNormalAdviceMethod {
+public class ZYAspectNormalMethod {
     
 	private String pointMethodName;
     private int pointMethodOrder;
@@ -14,7 +14,7 @@ class AspectNormalAdviceMethod {
     protected Method pointcutMethod;
     private TestPointcut pointcut;
 
-    public AspectNormalAdviceMethod(String pointMethodName, int pointMethodOrder,Object aspectObj, Method pointcutMethod) {
+    public ZYAspectNormalMethod(String pointMethodName, int pointMethodOrder,Object aspectObj, Method pointcutMethod) {
         this.pointMethodName = pointMethodName;
         this.pointMethodOrder = pointMethodOrder;
         this.aspectObj = aspectObj;
